@@ -1,0 +1,514 @@
+#define GL_GLEXT_PROTOTYPES
+
+#include <GL/glut.h>
+#include "initglui.h"
+
+#include <math.h>
+#include <stdarg.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <iostream>
+
+#define Cos(th) cos(3.1415926/180*(th))
+#define Sin(th) sin(3.1415926/180*(th))
+
+// From initglui.h {
+  Glui2* GluiHandle = NULL;
+  g2Button* QuitButton = NULL;
+  g2ProgressBar* satCamAz = NULL;
+  g2ProgressBar* satCamEl = NULL;
+  g2RadioGroup* MorA = NULL;
+  g2Label* manualConfig = NULL;
+  g2Label* spinAzTitle = NULL;
+  g2Spinner* spinAz = NULL;
+  g2Label* spinElTitle = NULL;
+  g2Spinner* spinEl = NULL;
+  g2Label* simulationConfig = NULL;
+  g2Label* spinYearTitle = NULL;
+  g2Spinner* spinYear = NULL;
+  g2Label* spinMonthTitle = NULL;
+  g2Spinner* spinMonth = NULL;
+  g2Label* spinDayTitle = NULL;
+  g2Spinner* spinDay = NULL;
+  g2Label* spinHourTitle = NULL;
+  g2Spinner* spinHour = NULL;
+  g2Label* spinMinuteTitle = NULL;
+  g2Spinner* spinMinute = NULL;
+  g2Label* spinSecondTitle = NULL;
+  g2Spinner* spinSecond = NULL;
+  g2Label* spinMultTitle = NULL;
+  g2Spinner* spinMult = NULL;
+  g2Button* setTimeButton = NULL;
+  g2Button* runButton = NULL;
+// }
+
+//variables
+// XZ position of the camera
+float x=0.0f, z=5.0f, y = 1.75f;
+
+// XZ position of the camera
+float lx=0.0f,lz=-1.0f, ly = 0.0f;
+
+//angle of rotation for the camera direction
+float angle = 0.0f;
+// the key states. These variables will be zero
+//when no key is being presses
+float deltaAngle = 0.0f;
+float deltaMove = 0;
+int xOrigin = -1;
+
+// variables to compute frames per second
+int frame;
+long time1, timebase1;
+char s[50];
+
+// variables to hold window identifiers
+int mainWindow, subWindow1,subWindow2,subWindow3;
+//border between subwindows
+int border = 6;
+
+// width and height of the window
+int width = 730+2*border;
+int height = (width/16)*9;
+
+void drawSnowMan() {
+	glColor3f(1.0f, 1.0f, 1.0f);
+
+  // Draw Body
+	glTranslatef(0.0f ,0.75f, 0.0f);
+	glutSolidSphere(0.75f,20,20);
+
+  // Draw Head
+	glTranslatef(0.0f, 1.0f, 0.0f);
+	glutSolidSphere(0.25f,20,20);
+
+  // Draw Eyes
+	glPushMatrix();
+	glColor3f(0.0f,0.0f,0.0f);
+	glTranslatef(0.05f, 0.10f, 0.18f);
+	glutSolidSphere(0.05f,10,10);
+	glTranslatef(-0.1f, 0.0f, 0.0f);
+	glutSolidSphere(0.05f,10,10);
+	glPopMatrix();
+
+  // Draw Nose
+	glColor3f(1.0f, 0.5f, 0.5f);
+	glRotatef(0.0f,1.0f, 0.0f, 0.0f);
+	glutSolidCone(0.08f,0.5f,10,2);
+
+	glColor3f(1.0f, 1.0f, 1.0f);
+}
+
+void renderBitmapString(
+		float x,
+		float y,
+		float z,
+		void *font,
+		char *string) {
+
+	char *c;
+	glRasterPos3f(x, y,z);
+	for (c=string; *c != '\0'; c++) {
+		glutBitmapCharacter(font, *c);
+	}
+}
+
+void restorePerspectiveProjection() {
+	glMatrixMode(GL_PROJECTION);
+	// restore previous projection matrix
+	glPopMatrix();
+
+	// get back to modelview mode
+	glMatrixMode(GL_MODELVIEW);
+}
+
+void setOrthographicProjection() {
+	// switch to projection mode
+	glMatrixMode(GL_PROJECTION);
+
+	// save previous matrix which contains the
+	//settings for the perspective projection
+	glPushMatrix();
+
+	// reset matrix
+	glLoadIdentity();
+
+	// set a 2D orthographic projection
+	gluOrtho2D(0, width, height, 0);
+
+	// switch back to modelview mode
+	glMatrixMode(GL_MODELVIEW);
+}
+
+void computePos(float deltaMove) {
+	x += deltaMove * lx * 0.1f;
+	z += deltaMove * lz * 0.1f;
+}
+
+// Common Render Items for all subwindows
+void renderScene2() {
+  // Draw ground
+	glColor3f(0.9f, 0.9f, 0.9f);
+	glBegin(GL_QUADS);
+		glVertex3f(-100.0f, 0.0f, -100.0f);
+		glVertex3f(-100.0f, 0.0f,  100.0f);
+		glVertex3f( 100.0f, 0.0f,  100.0f);
+		glVertex3f( 100.0f, 0.0f, -100.0f);
+	glEnd();
+
+  // Draw 36 SnowMen
+  int i,j;
+	for(i = -3; i < 3; i++)
+		for(j=-3; j < 3; j++)
+		{
+			glPushMatrix();
+			glTranslatef(i*10.0f, 0.0f, j * 10.0f);
+			drawSnowMan();
+			glPopMatrix();
+		}
+}
+
+// Display func for main window
+void renderScene() {
+  glutSetWindow(mainWindow);
+  glClear(GL_COLOR_BUFFER_BIT);
+  glutSwapBuffers();
+  glutPostRedisplay();
+}
+
+// Display func for sub window 1
+void renderScenesw1() {
+  glutSetWindow(subWindow1);
+
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+  // Turn on alpha blending for textures
+  glEnable(GL_ALPHA_TEST);
+  glAlphaFunc(GL_GREATER, 0.01f);
+
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+  GluiHandle->Render();
+
+  restorePerspectiveProjection();
+
+  glutSwapBuffers();
+  glutPostRedisplay();
+}
+
+void gluiRender()
+{
+    glutSetWindow(subWindow1);
+    // Clear the back buffer (nice light blue color)
+    glClearColor(0.92f, 0.94f, 0.97f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+ 
+    // Custom rendering code here...
+    // ...
+    // Left empty on purpose
+    // ...
+    
+    // Explicitly call the Glui2 render last
+    GluiHandle->Render();
+    
+    // Flush / force a render, and swap back/front buffers
+    glFlush();
+    glutSwapBuffers();
+    
+    // Tell GLUT we want to re-render afterwards
+    glutPostRedisplay();
+}
+
+// Display func for sub window 2
+void renderScenesw2() {
+	glutSetWindow(subWindow2);
+
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	glLoadIdentity();
+	gluLookAt(x, y+15, z,
+		  x ,y - 1,z,
+		  lx,0,lz);
+
+	// Draw red cone at the location of the main camera
+	glPushMatrix();
+	glColor3f(1.0,0.0,0.0);
+	glTranslatef(x,y,z);
+	glRotatef(180-(angle+deltaAngle)*180.0/3.14,0.0,1.0,0.0);
+	glutSolidCone(0.2,0.8f,4,4);
+	glPopMatrix();
+
+	renderScene2();
+
+	glutSwapBuffers();
+  glutPostRedisplay();
+}
+
+// Display func for sub window 3
+void renderScenesw3() {
+	glutSetWindow(subWindow3);
+
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	glLoadIdentity();
+	gluLookAt(x-lz*10 , y, z+lx*10,
+		  x ,y ,z ,
+		  0.0f,1.0f,0.0f);
+
+	// Draw red cone at the location of the main camera
+	glPushMatrix();
+	glColor3f(1.0,0.0,0.0);
+	glTranslatef(x,y,z);
+	glRotatef(180-(angle+deltaAngle)*180.0/3.14,0.0,1.0,0.0);
+	glutSolidCone(0.2,0.8f,4,4);
+	glPopMatrix();
+
+	renderScene2();
+
+	glutSwapBuffers();
+  glutPostRedisplay();
+}
+
+// Global render func
+void renderSceneAll() {
+  // check for keyboard movement
+  if (deltaMove) {
+    computePos(deltaMove);
+    glutSetWindow(mainWindow);
+    glutPostRedisplay();
+  }
+
+  while (angle+deltaAngle < 0)
+    angle+=2*M_PI;
+  satCamAz->SetProgress(fmod(angle+deltaAngle,2*M_PI)/(2*M_PI));
+  satCamEl->SetProgress(fmod(angle+deltaAngle,2*M_PI)/(2*M_PI));
+  renderScene();
+  //renderScenesw1();
+  gluiRender();
+  renderScenesw2();
+  renderScenesw3();
+}
+
+void setProjection(int w, int h)
+{
+	float ratio;
+	// Prevent a divide by zero, when window is too short
+	// (you cant make a window of zero width).
+	ratio = 1.0f * w / h;
+	// Reset the coordinate system before modifying
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+
+	// Set the viewport to be the entire window
+        glViewport(0, 0, w, h);
+
+	// Set the clipping volume
+	gluPerspective(45,ratio,0.1,1000);
+	glMatrixMode(GL_MODELVIEW);
+}
+
+void changeSize(int w,int h) {
+	if(h == 0)
+		h = 1;
+
+	// we're keeping these values cause we'll need them latter
+	width = w;
+	height = h;
+
+	// set subwindow 1 as the active window
+	glutSetWindow(subWindow1);
+	// resize and reposition the sub window
+	glutPositionWindow(border,h-177-border);
+	glutReshapeWindow(w-2*border, 177);
+	glViewport(0, 0, w-2*border, 177);
+
+	// set subwindow 2 as the active window
+	glutSetWindow(subWindow2);
+	// resize and reposition the sub window
+	glutPositionWindow(border, border);
+	glutReshapeWindow(w/2-border*3/2, h-177-3*border);
+	setProjection(w/2-border*3/2, h-177-3*border);
+
+	// set subwindow 3 as the active window
+	glutSetWindow(subWindow3);
+	// resize and reposition the sub window
+	glutPositionWindow((w+border)/2, border);
+	glutReshapeWindow(w/2-border*3/2, h-177-3*border);
+	setProjection(w/2-border*3/2, h-177-3*border);
+
+  // Set the position of all the GUI elements
+  int contOffset = width/2 -365-2*border;
+  QuitButton->SetPos(contOffset+25, 50);
+  MorA->SetPos(contOffset+150, 45);
+  satCamAz->SetPos(contOffset+25, 90);
+  satCamEl->SetPos(contOffset+180, 90);
+  manualConfig->SetPos(contOffset+575, 5);
+  spinAzTitle->SetPos(contOffset+575, 20);
+  spinAz->SetPos(contOffset+575, 35);
+  spinElTitle->SetPos(contOffset+645, 20);
+  spinEl->SetPos(contOffset+645, 35);
+  simulationConfig->SetPos(contOffset+350, 5);
+  spinYearTitle->SetPos(contOffset+350, 20);
+  spinYear->SetPos(contOffset+350, 35);
+  spinMonthTitle->SetPos(contOffset+420, 20);
+  spinMonth->SetPos(contOffset+420, 35);
+  spinDayTitle->SetPos(contOffset+490, 20);
+  spinDay->SetPos(contOffset+490, 35);
+  spinHourTitle->SetPos(contOffset+350, 60);
+  spinHour->SetPos(contOffset+350, 75);
+  spinMinuteTitle->SetPos(contOffset+420, 60);
+  spinMinute->SetPos(contOffset+420, 75);
+  spinSecondTitle->SetPos(contOffset+490, 60);
+  spinSecond->SetPos(contOffset+490, 75);
+  spinMultTitle->SetPos(contOffset+460, 100);
+  spinMult->SetPos(contOffset+490, 115);
+  setTimeButton->SetPos(contOffset+350, 115);
+  runButton->SetPos(contOffset+395, 155);
+}
+
+// -----------------------------------
+//             KEYBOARD
+// -----------------------------------
+
+void processNormalKeys(unsigned char key, int xx, int yy) {
+	if (key == 27) {
+		glutDestroyWindow(mainWindow);
+		exit(0);
+	}
+}
+
+void pressKey(int key, int xx, int yy) {
+	switch (key) {
+		case GLUT_KEY_UP : deltaMove = 0.5f; break;
+		case GLUT_KEY_DOWN : deltaMove = -0.5f; break;
+	}
+	glutSetWindow(mainWindow);
+	glutPostRedisplay();
+}
+
+void releaseKey(int key, int x, int y) {
+	switch (key) {
+		case GLUT_KEY_UP :
+		case GLUT_KEY_DOWN : deltaMove = 0;break;
+	}
+}
+
+// -----------------------------------
+//             MOUSE
+// -----------------------------------
+
+void mouseMove(int x, int y) {
+	// this will only be true when the left button is down
+	if (xOrigin >= 0) {
+		// update deltaAngle
+		deltaAngle = (x - xOrigin) * 0.001f;
+
+		// update camera's direction
+		lx = sin(angle + deltaAngle);
+		lz = -cos(angle + deltaAngle);
+
+		glutSetWindow(mainWindow);
+		glutPostRedisplay();
+	}
+}
+
+void mouseButton(int button, int state, int x, int y) {
+	// only start motion if the left button is pressed
+	if (button == GLUT_LEFT_BUTTON) {
+		// when the button is released
+		if (state == GLUT_UP) {
+			angle += deltaAngle;
+			deltaAngle = 0.0f;
+			xOrigin = -1;
+		}
+		else  {// state = GLUT_DOWN
+			xOrigin = x;
+
+		}
+	}
+}
+
+void idle()
+{
+ renderSceneAll();
+}
+
+// Callback to the application
+void Quit(g2Controller* Caller)
+{
+    exit(0);
+}
+
+// -----------------------------------
+//             MAIN and INIT
+// -----------------------------------
+
+void init() {
+	glClearColor(0.0, 0.0, 0.0, 0.0);
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
+
+	// register callbacks
+	glutIgnoreKeyRepeat(1);
+	glutKeyboardFunc(processNormalKeys);
+	glutSpecialFunc(pressKey);
+	glutSpecialUpFunc(releaseKey);
+	glutMouseFunc(mouseButton);
+	glutMotionFunc(mouseMove);
+  glutIdleFunc(idle);
+}
+
+int main(int argc, char **argv) {
+	// init GLUT and create main window
+	glutInit(&argc, argv);
+	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
+
+  // Center the window
+  int SystemResWidth = glutGet(GLUT_SCREEN_WIDTH);
+  int SystemResHeight = glutGet(GLUT_SCREEN_HEIGHT);
+  glutInitWindowPosition(SystemResWidth / 2 - width / 2, SystemResHeight / 2 - height / 2);
+
+	glutInitWindowSize(width,height);
+	mainWindow = glutCreateWindow("Seth Miers - Jackalope");
+
+  // Turn on alpha blending for textures
+  glEnable(GL_ALPHA_TEST);
+  glAlphaFunc(GL_GREATER, 0.01f);
+
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	// callbacks for main window
+	glutDisplayFunc(renderSceneAll);
+	glutReshapeFunc(changeSize);
+
+	// Removing the idle function to save CPU and GPU
+	//glutIdleFunc(renderSceneAll);
+	init();
+
+	// sub windows
+	subWindow1 = glutCreateSubWindow(mainWindow, border, height-177-border, width-2*border, 177);
+  // Turn on alpha blending for textures
+  glEnable(GL_ALPHA_TEST);
+  glAlphaFunc(GL_GREATER, 0.01f);
+
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  InitGlui2();
+	//glutDisplayFunc(renderScenesw1);
+	//init();
+
+	subWindow2 = glutCreateSubWindow(mainWindow, border, border,width/2-border*3/2, height-177-3*border);
+	glutDisplayFunc(renderScenesw2);
+	init();
+
+	subWindow3 = glutCreateSubWindow(mainWindow, (width+border)/2, border, width/2-border*3/2, height-177-3*border);
+	glutDisplayFunc(renderScenesw3);
+	init();
+
+	// enter GLUT event processing cycle
+	glutMainLoop();
+	
+	return 1;
+}
