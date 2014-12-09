@@ -104,101 +104,100 @@ float azimuth = 45;
 float elevation = 45;
 
 void drawSnowMan() {
-	glColor3f(1.0f, 1.0f, 1.0f);
+  glColor3f(1.0f, 1.0f, 1.0f);
 
   // Draw Body
-	glTranslatef(0.0f ,0.75f, 0.0f);
-	glutSolidSphere(0.75f,20,20);
+  glTranslatef(0.0f ,0.75f, 0.0f);
+  glutSolidSphere(0.75f,20,20);
 
   // Draw Head
-	glTranslatef(0.0f, 1.0f, 0.0f);
-	glutSolidSphere(0.25f,20,20);
+  glTranslatef(0.0f, 1.0f, 0.0f);
+  glutSolidSphere(0.25f,20,20);
 
   // Draw Eyes
-	glPushMatrix();
-	glColor3f(0.0f,0.0f,0.0f);
-	glTranslatef(0.05f, 0.10f, 0.18f);
-	glutSolidSphere(0.05f,10,10);
-	glTranslatef(-0.1f, 0.0f, 0.0f);
-	glutSolidSphere(0.05f,10,10);
-	glPopMatrix();
+  glPushMatrix();
+  glColor3f(0.0f,0.0f,0.0f);
+  glTranslatef(0.05f, 0.10f, 0.18f);
+  glutSolidSphere(0.05f,10,10);
+  glTranslatef(-0.1f, 0.0f, 0.0f);
+  glutSolidSphere(0.05f,10,10);
+  glPopMatrix();
 
   // Draw Nose
-	glColor3f(1.0f, 0.5f, 0.5f);
-	glRotatef(0.0f,1.0f, 0.0f, 0.0f);
-	glutSolidCone(0.08f,0.5f,10,2);
+  glColor3f(1.0f, 0.5f, 0.5f);
+  glRotatef(0.0f,1.0f, 0.0f, 0.0f);
+  glutSolidCone(0.08f,0.5f,10,2);
 
-	glColor3f(1.0f, 1.0f, 1.0f);
+  glColor3f(1.0f, 1.0f, 1.0f);
 }
 
 void renderBitmapString(
-		float x,
-		float y,
-		float z,
-		void *font,
-		char *string) {
+    float x,
+    float y,
+    float z,
+    void *font,
+    char *string) {
 
-	char *c;
-	glRasterPos3f(x, y,z);
-	for (c=string; *c != '\0'; c++) {
-		glutBitmapCharacter(font, *c);
-	}
+  char *c;
+  glRasterPos3f(x, y,z);
+  for (c=string; *c != '\0'; c++) {
+    glutBitmapCharacter(font, *c);
+  }
 }
 
 void restorePerspectiveProjection() {
-	glMatrixMode(GL_PROJECTION);
-	// restore previous projection matrix
-	glPopMatrix();
+  glMatrixMode(GL_PROJECTION);
+  // restore previous projection matrix
+  glPopMatrix();
 
-	// get back to modelview mode
-	glMatrixMode(GL_MODELVIEW);
+  // get back to modelview mode
+  glMatrixMode(GL_MODELVIEW);
 }
 
 void setOrthographicProjection() {
-	// switch to projection mode
-	glMatrixMode(GL_PROJECTION);
+  // switch to projection mode
+  glMatrixMode(GL_PROJECTION);
 
-	// save previous matrix which contains the
-	//settings for the perspective projection
-	glPushMatrix();
+  // save previous matrix which contains the
+  //settings for the perspective projection
+  glPushMatrix();
 
-	// reset matrix
-	glLoadIdentity();
+  // reset matrix
+  glLoadIdentity();
 
-	// set a 2D orthographic projection
-	gluOrtho2D(0, width, height, 0);
+  // set a 2D orthographic projection
+  gluOrtho2D(0, width, height, 0);
 
-	// switch back to modelview mode
-	glMatrixMode(GL_MODELVIEW);
+  // switch back to modelview mode
+  glMatrixMode(GL_MODELVIEW);
 }
 
 void computePos(float deltaMove) {
-	x += deltaMove * lx * 0.1f;
-	z += deltaMove * lz * 0.1f;
+  x += deltaMove * lx * 0.1f;
+  z += deltaMove * lz * 0.1f;
 }
 
 // Common Render Items for all subwindows
 void renderScene2() {
   // Draw ground
-  
-	/*glColor3f(0.9f, 0.9f, 0.9f);
-	glBegin(GL_QUADS);
-		glVertex3f(-100.0f, -1.0f, -100.0f);
-		glVertex3f(-100.0f, -1.0f,  100.0f);
-		glVertex3f( 100.0f, -1.0f,  100.0f);
-		glVertex3f( 100.0f, -1.0f, -100.0f);
-	glEnd();*/
+  glColor3f(0.9f, 0.9f, 0.9f);
+  glBegin(GL_QUADS);
+    glVertex3f(-100.0f, -1.0f, -100.0f);
+    glVertex3f(-100.0f, -1.0f,  100.0f);
+    glVertex3f( 100.0f, -1.0f,  100.0f);
+    glVertex3f( 100.0f, -1.0f, -100.0f);
+  glEnd();
 
   // Draw 36 SnowMen
   /*int i,j;
-	for(i = -3; i < 3; i++)
-		for(j=-3; j < 3; j++)
-		{
-			glPushMatrix();
-			glTranslatef(i*10.0f, 0.0f, j * 10.0f);
-			drawSnowMan();
-			glPopMatrix();
-		}*/
+  for(i = -3; i < 3; i++)
+    for(j=-3; j < 3; j++)
+    {
+      glPushMatrix();
+      glTranslatef(i*10.0f, 0.0f, j * 10.0f);
+      drawSnowMan();
+      glPopMatrix();
+    }*/
 
   struct cLocation myLocation;
   myLocation.dLongitude = -105.25185183;
@@ -461,41 +460,44 @@ void gluiRender()
     glutPostRedisplay();
 }
 
-void setToCurrentTime(g2Controller* Caller){
-      time_t curTime;
-      time(&curTime);
-      struct tm * ptm = gmtime(&curTime);
-      spinYear->SetInt(1900+ptm->tm_year);
-      spinMonth->SetInt(1+ptm->tm_mon);
-      spinDay->SetInt(ptm->tm_mday);
-      spinHour->SetInt(ptm->tm_hour);
-      spinMinute->SetInt(ptm->tm_min);
-      spinSecond->SetInt(ptm->tm_sec);
+void setToCurrentTime(g2Controller* Caller)
+{
+  time_t curTime;
+  time(&curTime);
+  struct tm * ptm = gmtime(&curTime);
+  spinYear->SetInt(1900+ptm->tm_year);
+  spinMonth->SetInt(1+ptm->tm_mon);
+  spinDay->SetInt(ptm->tm_mday);
+  spinHour->SetInt(ptm->tm_hour);
+  spinMinute->SetInt(ptm->tm_min);
+  spinSecond->SetInt(ptm->tm_sec);
 }
 
 // Display func for sub window 2
-void renderScenesw2() {
-	glutSetWindow(subWindow2);
+void renderScenesw2()
+{
+  glutSetWindow(subWindow2);
 
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	glLoadIdentity();
-	gluLookAt(0, satElevNum, 0,
-		  0 ,0,0,
-		  1.0f,0,0);
+  glLoadIdentity();
+  gluLookAt(0, satElevNum, 0,
+      0 ,0,0,
+      1.0f,0,0);
 
-   glPushMatrix();
-   glScalef(10.0f,10.0f,10.0f);
-   glRotatef(p13.getLatitude()-90,0,0,1);
-   glRotatef(-p13.getLongitude()-90,0,1,0);
-   glCallList(earth);
-   //glPopMatrix();
-   //;
-   glRotatef(-90, 0, 0, 1);
+  glPushMatrix();
+  glScalef(10.0f,10.0f,10.0f);
+  glRotatef(p13.getLatitude()-90,0,0,1);
+  glRotatef(-p13.getLongitude()-90,0,1,0);
+  glCallList(earth);
+  glRotatef(-90, 0, 0, 1);
 
   struct cLocation myLocation;
   myLocation.dLongitude = 0;//p13.getLongitude();//-105.25185183;
   myLocation.dLatitude = 0;//p13.getLatitude();//40.01076298;
+  //print satellite lat and long
+  //cout << p13.getLongitude() << endl;
+  //cout << p13.getLatitude() << endl;
   struct cTime theTime;
   theTime.iYear = spinYear->GetInt();
   theTime.iMonth = spinMonth->GetInt();
@@ -508,56 +510,51 @@ void renderScenesw2() {
 
   sunpos(theTime, myLocation, &currentSunCoord);
 
-   double t = glutGet(GLUT_ELAPSED_TIME)/1000.0;
-   int zh = fmod(90*t,360.0);
-   float RGBA[4] = {1,0.8,0.8,1.0};  //  Colors
-   float Emission[]  = {0.5,0.5,0.5,0.6};
-   float Ambient[]   = {0.5,0.5,0.5,1.0};
-   float Diffuse[]   = {0.8,0.8,0.8,1.0};
-   float Specular[]  = {0.8,0.8,0.8,1.0};
-   float Position[]  = {sunRad*Sin(currentSunCoord.dZenithAngle)*Cos(currentSunCoord.dAzimuth), sunRad*Sin(currentSunCoord.dZenithAngle)*Sin(currentSunCoord.dAzimuth), sunRad*Cos(currentSunCoord.dZenithAngle), 0.0, 1.0};
-   float Shinyness[] = {16};
+  double t = glutGet(GLUT_ELAPSED_TIME)/1000.0;
+  int zh = fmod(90*t,360.0);
+  float RGBA[4] = {1,0.8,0.8,1.0};  //  Colors
+  float Emission[]  = {0.5,0.5,0.5,0.6};
+  float Ambient[]   = {0.5,0.5,0.5,1.0};
+  float Diffuse[]   = {0.8,0.8,0.8,1.0};
+  float Specular[]  = {0.8,0.8,0.8,1.0};
+  float Position[]  = {sunRad*Sin(currentSunCoord.dZenithAngle)*Cos(currentSunCoord.dAzimuth),
+    sunRad*Sin(currentSunCoord.dZenithAngle)*Sin(currentSunCoord.dAzimuth),
+    sunRad*Cos(currentSunCoord.dZenithAngle), 0.0, 1.0};
+  float Shinyness[] = {16};
 
-   //  Draw light position as sphere (still no lighting here)
-   //glPushMatrix();
-   glColor3f(1,1,1);
-   //glRotatef(-p13.getLongitude()-90,0,1,0);
-   //glRotatef(p13.getLatitude()-90,0,0,1);
-   glTranslated(Position[0],Position[1],Position[2]);
+  //  Draw light position as sphere (still no lighting here)
+  glColor3f(1,1,1);
+  glTranslated(Position[0],Position[1],Position[2]);
 
-   //  OpenGL should normalize normal vectors
-   glEnable(GL_NORMALIZE);
-   //  Enable lighting
-   glEnable(GL_LIGHTING);
-   //  Enable light 0
-   glEnable(GL_LIGHT1);
-   //  Set ambient, diffuse, specular components and position of light 0
-   glLightfv(GL_LIGHT1,GL_AMBIENT ,Ambient);
-   glLightfv(GL_LIGHT1,GL_DIFFUSE ,Diffuse);
-   glLightfv(GL_LIGHT1,GL_SPECULAR,Specular);
-   glLightfv(GL_LIGHT1,GL_POSITION,Position);
-   //  Set materials
-   glMaterialfv(GL_FRONT_AND_BACK,GL_SHININESS,Shinyness);
-   glMaterialfv(GL_FRONT_AND_BACK,GL_AMBIENT,RGBA);
-   glMaterialfv(GL_FRONT_AND_BACK,GL_DIFFUSE,RGBA);
-   glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,Specular);
-   glMaterialfv(GL_FRONT_AND_BACK,GL_EMISSION,Emission);
+  //  OpenGL should normalize normal vectors
+  glEnable(GL_NORMALIZE);
+  //  Enable lighting
+  glEnable(GL_LIGHTING);
+  //  Enable light 0
+  glEnable(GL_LIGHT1);
+  //  Set ambient, diffuse, specular components and position of light 0
+  glLightfv(GL_LIGHT1,GL_AMBIENT ,Ambient);
+  glLightfv(GL_LIGHT1,GL_DIFFUSE ,Diffuse);
+  glLightfv(GL_LIGHT1,GL_SPECULAR,Specular);
+  glLightfv(GL_LIGHT1,GL_POSITION,Position);
+  //  Set materials
+  glMaterialfv(GL_FRONT_AND_BACK,GL_SHININESS,Shinyness);
+  glMaterialfv(GL_FRONT_AND_BACK,GL_AMBIENT,RGBA);
+  glMaterialfv(GL_FRONT_AND_BACK,GL_DIFFUSE,RGBA);
+  glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,Specular);
+  glMaterialfv(GL_FRONT_AND_BACK,GL_EMISSION,Emission);
 
-
-   glPopMatrix();
-
-
-	//renderScene2();
-
-	glutSwapBuffers();
+  glPopMatrix();
+  glutSwapBuffers();
   glutPostRedisplay();
 }
 
 // Display func for sub window 3
-void renderScenesw3() {
-	glutSetWindow(subWindow3);
+void renderScenesw3()
+{
+  glutSetWindow(subWindow3);
 
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   glEnable(GL_FOG);
   float FogCol[3]={0.8f,0.8f,0.8f}; // Define a nice light grey
@@ -565,27 +562,20 @@ void renderScenesw3() {
   glFogi(GL_FOG_MODE, GL_EXP2);
   glFogf(GL_FOG_DENSITY, 0.01f);
 
-	glLoadIdentity();
-	gluLookAt(x-lz*30 , 10, z+lx*30,
-		  0 ,0 ,0 ,
-		  0.0f,1.0f,0.0f);
+  glLoadIdentity();
+  gluLookAt(x-lz*30 , 10, z+lx*30,
+      0 ,0 ,0 ,
+      0.0f,1.0f,0.0f);
 
-	// Draw red cone at the location of the main camera
-	/*glPushMatrix();
-	glColor3f(1.0,0.0,0.0);
-	glTranslatef(x,y,z);
-	glRotatef(180-(angle+deltaAngle)*180.0/3.14,0.0,1.0,0.0);
-	glutSolidCone(0.2,0.8f,4,4);
-	glPopMatrix();*/
+  renderScene2();
 
-	renderScene2();
-
-	glutSwapBuffers();
+  glutSwapBuffers();
   glutPostRedisplay();
 }
 
 // Global render func
-void renderSceneAll() {
+void renderSceneAll()
+{
   // check for keyboard movement
   if (deltaMove) {
     computePos(deltaMove);
@@ -606,50 +596,51 @@ void renderSceneAll() {
 
 void setProjection(int w, int h)
 {
-	float ratio;
-	// Prevent a divide by zero, when window is too short
-	// (you cant make a window of zero width).
-	ratio = 1.0f * w / h;
-	// Reset the coordinate system before modifying
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
+  float ratio;
+  // Prevent a divide by zero, when window is too short
+  // (you cant make a window of zero width).
+  ratio = 1.0f * w / h;
+  // Reset the coordinate system before modifying
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
 
-	// Set the viewport to be the entire window
+  // Set the viewport to be the entire window
         glViewport(0, 0, w, h);
 
-	// Set the clipping volume
-	gluPerspective(45,ratio,0.1,1000);
-	glMatrixMode(GL_MODELVIEW);
+  // Set the clipping volume
+  gluPerspective(45,ratio,0.1,1000);
+  glMatrixMode(GL_MODELVIEW);
 }
 
-void changeSize(int w,int h) {
-	if(h == 0)
-		h = 1;
+void changeSize(int w,int h)
+{
+  if(h == 0)
+    h = 1;
 
-	// we're keeping these values cause we'll need them latter
-	width = w;
-	height = h;
+  // we're keeping these values cause we'll need them latter
+  width = w;
+  height = h;
 
-	// set subwindow 1 as the active window
-	glutSetWindow(subWindow1);
-	// resize and reposition the sub window
-	glutPositionWindow(border,h-177-border);
-	glutReshapeWindow(w-2*border, 177);
-	glViewport(0, 0, w-2*border, 177);
+  // set subwindow 1 as the active window
+  glutSetWindow(subWindow1);
+  // resize and reposition the sub window
+  glutPositionWindow(border,h-177-border);
+  glutReshapeWindow(w-2*border, 177);
+  glViewport(0, 0, w-2*border, 177);
 
-	// set subwindow 2 as the active window
-	glutSetWindow(subWindow2);
-	// resize and reposition the sub window
-	glutPositionWindow(border, border);
-	glutReshapeWindow(w/2-border*3/2, h-177-3*border);
-	setProjection(w/2-border*3/2, h-177-3*border);
+  // set subwindow 2 as the active window
+  glutSetWindow(subWindow2);
+  // resize and reposition the sub window
+  glutPositionWindow(border, border);
+  glutReshapeWindow(w/2-border*3/2, h-177-3*border);
+  setProjection(w/2-border*3/2, h-177-3*border);
 
-	// set subwindow 3 as the active window
-	glutSetWindow(subWindow3);
-	// resize and reposition the sub window
-	glutPositionWindow((w+border)/2, border);
-	glutReshapeWindow(w/2-border*3/2, h-177-3*border);
-	setProjection(w/2-border*3/2, h-177-3*border);
+  // set subwindow 3 as the active window
+  glutSetWindow(subWindow3);
+  // resize and reposition the sub window
+  glutPositionWindow((w+border)/2, border);
+  glutReshapeWindow(w/2-border*3/2, h-177-3*border);
+  setProjection(w/2-border*3/2, h-177-3*border);
 
   // Set the position of all the GUI elements
   int contOffset = width/2 -365-2*border;
@@ -685,108 +676,114 @@ void changeSize(int w,int h) {
 //             KEYBOARD
 // -----------------------------------
 
-void processNormalKeys(unsigned char key, int xx, int yy) {
-	if (key == 27) {
-		glutDestroyWindow(mainWindow);
-		exit(0);
-	}
+void processNormalKeys(unsigned char key, int xx, int yy)
+{
+  if (key == 27) {
+    glutDestroyWindow(mainWindow);
+    exit(0);
+  }
 }
 
-void pressKey(int key, int xx, int yy) {
-	switch (key) {
-		case GLUT_KEY_UP: 
+void pressKey(int key, int xx, int yy)
+{
+  switch (key) {
+    case GLUT_KEY_UP: 
       satElevNum+=5; break;
-		case GLUT_KEY_DOWN: 
+    case GLUT_KEY_DOWN: 
       satElevNum-=5; break;
-	}
-	glutSetWindow(mainWindow);
-	glutPostRedisplay();
+  }
+  glutSetWindow(mainWindow);
+  glutPostRedisplay();
 }
 
-void releaseKey(int key, int x, int y) {
-	switch (key) {
-		case GLUT_KEY_UP :
-		case GLUT_KEY_DOWN : break;
-	}
+void releaseKey(int key, int x, int y)
+{
+  switch (key) {
+    case GLUT_KEY_UP :
+    case GLUT_KEY_DOWN : break;
+  }
 }
 
 // -----------------------------------
 //             MOUSE
 // -----------------------------------
 
-void mouseMove(int x, int y) {
-	// this will only be true when the left button is down
-	if (xOrigin >= 0) {
-		// update deltaAngle
-		deltaAngle = (x - xOrigin) * 0.001f;
+void mouseMove(int x, int y)
+{
+  // this will only be true when the left button is down
+  if (xOrigin >= 0) {
+    // update deltaAngle
+    deltaAngle = (x - xOrigin) * 0.001f;
 
-		// update camera's direction
-		lx = sin(angle + deltaAngle);
-		lz = -cos(angle + deltaAngle);
+    // update camera's direction
+    lx = sin(angle + deltaAngle);
+    lz = -cos(angle + deltaAngle);
 
-		glutSetWindow(mainWindow);
-		glutPostRedisplay();
-	}
+    glutSetWindow(mainWindow);
+    glutPostRedisplay();
+  }
 }
 
-void mouseButton(int button, int state, int x, int y) {
-	// only start motion if the left button is pressed
-	if (button == GLUT_LEFT_BUTTON) {
-		// when the button is released
-		if (state == GLUT_UP) {
-			angle += deltaAngle;
-			deltaAngle = 0.0f;
-			xOrigin = -1;
-		}
-		else  {// state = GLUT_DOWN
-			xOrigin = x;
-
-		}
-	}
+void mouseButton(int button, int state, int x, int y)
+{
+  // only start motion if the left button is pressed
+  if (button == GLUT_LEFT_BUTTON) {
+    // when the button is released
+    if (state == GLUT_UP) {
+      angle += deltaAngle;
+      deltaAngle = 0.0f;
+      xOrigin = -1;
+    }
+    else  {// state = GLUT_DOWN
+      xOrigin = x;
+    }
+  }
 }
 
 void idle()
 {
- renderSceneAll();
+  renderSceneAll();
 }
 
 // Callback to the application
 void Quit(g2Controller* Caller)
 {
-    exit(0);
+  exit(0);
 }
 
 // -----------------------------------
 //             MAIN and INIT
 // -----------------------------------
 
-void init() {
-	glClearColor(0.0, 0.0, 0.0, 0.0);
-	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_CULL_FACE);
+void init()
+{
+  glClearColor(0.0, 0.0, 0.0, 0.0);
+  glEnable(GL_DEPTH_TEST);
+  glEnable(GL_CULL_FACE);
 
-	// register callbacks
-	glutIgnoreKeyRepeat(1);
-	glutKeyboardFunc(processNormalKeys);
-	glutSpecialFunc(pressKey);
-	glutSpecialUpFunc(releaseKey);
-	glutMouseFunc(mouseButton);
-	glutMotionFunc(mouseMove);
+  // register callbacks
+  glutIgnoreKeyRepeat(1);
+  glutKeyboardFunc(processNormalKeys);
+  glutSpecialFunc(pressKey);
+  glutSpecialUpFunc(releaseKey);
+  glutMouseFunc(mouseButton);
+  glutMotionFunc(mouseMove);
   glutIdleFunc(idle);
 }
 
-int main(int argc, char **argv) {
-	// init GLUT and create main window
-	glutInit(&argc, argv);
-	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
+int main(int argc, char **argv)
+{
+  // init GLUT and create main window
+  glutInit(&argc, argv);
+  glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
 
   // Center the window
   int SystemResWidth = glutGet(GLUT_SCREEN_WIDTH);
   int SystemResHeight = glutGet(GLUT_SCREEN_HEIGHT);
   glutInitWindowPosition(SystemResWidth / 2 - width / 2, SystemResHeight / 2 - height / 2);
 
-	glutInitWindowSize(width,height);
-	mainWindow = glutCreateWindow("Seth Miers - Jackalope");
+  glutInitWindowSize(width,height);
+  mainWindow = glutCreateWindow("Seth Miers - Jackalope");
 
   // Turn on alpha blending for textures
   glEnable(GL_ALPHA_TEST);
@@ -797,47 +794,44 @@ int main(int argc, char **argv) {
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	// callbacks for main window
-	glutDisplayFunc(renderSceneAll);
-	glutReshapeFunc(changeSize);
+  // callbacks for main window
+  glutDisplayFunc(renderSceneAll);
+  glutReshapeFunc(changeSize);
 
-	// Removing the idle function to save CPU and GPU
-	//glutIdleFunc(renderSceneAll);
-	init();
+  // Removing the idle function to save CPU and GPU
+  //glutIdleFunc(renderSceneAll);
+  init();
 
-	// sub windows
-	subWindow1 = glutCreateSubWindow(mainWindow, border, height-177-border, width-2*border, 177);
+  // sub windows
+  subWindow1 = glutCreateSubWindow(mainWindow, border, height-177-border, width-2*border, 177);
   // Turn on alpha blending for textures
   glEnable(GL_ALPHA_TEST);
   glAlphaFunc(GL_GREATER, 0.01f);
-
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   InitGlui2();
-	//glutDisplayFunc(renderScenesw1);
-	//init();
 
-	subWindow2 = glutCreateSubWindow(mainWindow, border, border,width/2-border*3/2, height-177-3*border);
-	glutDisplayFunc(renderScenesw2);
-	init();
+  subWindow2 = glutCreateSubWindow(mainWindow, border, border,width/2-border*3/2, height-177-3*border);
+  glutDisplayFunc(renderScenesw2);
+  init();
+
+  // objs to be loaded for window 2
   earth = LoadOBJ("earth/earth.obj");
 
-	subWindow3 = glutCreateSubWindow(mainWindow, (width+border)/2, border, width/2-border*3/2, height-177-3*border);
-	glutDisplayFunc(renderScenesw3);
-	init();
+  subWindow3 = glutCreateSubWindow(mainWindow, (width+border)/2, border, width/2-border*3/2, height-177-3*border);
+  glutDisplayFunc(renderScenesw3);
+  init();
 
-
-  // objs to be loaded
+  // objs to be loaded for window 3
   base = LoadOBJ("dish/base.obj");
   arm = LoadOBJ("dish/arm.obj");
   dish = LoadOBJ("dish/dish.obj");
   plane = LoadOBJ("plane/plane.obj");
-  //earth = LoadOBJ("earth/earth.obj");
-  
+
   glGenerateMipmap(GL_TEXTURE_2D);
 
-	// enter GLUT event processing cycle
-	glutMainLoop();
-	
-	return 1;
+  // enter GLUT event processing cycle
+  glutMainLoop();
+
+  return 1;
 }
