@@ -49,7 +49,6 @@ Decided to make sure manual control still works
 ### To-do
 
  - [ ] Fix comments and A more exciting elevation of the dish as the ISS passes over Colorado
-![Elevation increasing](https://raw.githubusercontent.com/superzanti/Jackalope_TLE_SIM/master/screenshots/2014-12-08-162749_1920x1080_scrot.pngformatting. It was thrown together pretty harshly for a deadline.
  - [ ] Clean up unused variables
  - [ ] Cleanly separate each header file and make sure it's properly associated with it's cpp/c file
  - [ ] Implement a function to automatically pull values from a TLE insetad of having to manually put them in
