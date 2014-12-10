@@ -49,6 +49,7 @@ If you can't get the program to run then here are 2 youtube videos showing the p
  - Modular interface that can be used for other systems (various of the cpp files are going to be used in my capstone project)
  - All the materials are set to be fairly acurate (the dish is metal the ground is rock)
  - I thought it was cool that I have 3 separate windows to render stuff in!
+ - A opengl colision detection algorithm was used but was later commented out because it used a sphere to estimate the object. (wasn't good enough)
 
 ### Current controlls
 The program features 3 windows that can be manipulated.
