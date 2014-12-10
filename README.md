@@ -26,6 +26,10 @@ I was going to finish up my other obj file reader from a month ago, but after wo
 
 Glui is an old (2006) library that I had to modify to make work with 'normal' opengl coding.
 
+If you can't get the program to run then here are 2 youtube videos showing the program in operation:
+[Arch](http://www.youtube.com/watch?v=N-2XADJBdCc)
+[Ubuntu](http://www.youtube.com/watch?v=VAHC_CkbPQc)
+
 #### Neat stuff
 
  - The sun is in the correct spot associated with the time! Meaning if it's 19:00 utc (12:00 colorado time) then the sun will be directly overhead!
