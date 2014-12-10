@@ -20,6 +20,26 @@ I was going to finish up my other obj file reader from a month ago, but after wo
 
 Glui is an old (2006) library that I had to modify to make work with 'normal' opengl coding.
 
+#### Neat stuff
+
+ - The sun is in the correct spot associated with the time! Meaning if it's 19:00 utc (12:00 colorado time) then the sun will be directly overhead!
+ - The colors change based on where the sun is. In the night time the color that the light emits is more bluish, in the daytime it's more reddish. The fog also changes color so it doens't just look like a flat color all the time
+ - Since the sun is in the correct spot you can see the correct day/night cycles on both screens for the given time
+ - The view on the right represents if you attached a camera to the satellite
+ - The view on the left can be rotated by clicking and dragging with the mouse
+ - The dish is currently set to track the international space station (it's fun to compare this with an online site to see that the valus are correct)
+ - Does anyone actually read this stuff?
+ - Each GUI element is done in just opengl libraries (none others are needed)
+ - The GUI was converted from an old set of code called GLUI. It no longer works or is supported because Qt has become popular. However I thought it would be fun to convert it to work with the current OpenGL to see how it functions and to see if I could integrate it with 'standard' opengl/c++ code. (the original GLUI was not 'standard')
+ - The GUI elements have infinite customability. (Tabing to the next box is on my list of todos as well as being able to type in a negative number into the integer boxes)
+ - The image used for each GUI element is in a simple conifg file (which can be easily modified)
+ - The ground plane in the right window is the actual location of where my dish is. (very low quality... but it works)
+ - The application can run with less than 500Mb of ram! (yes this was tested in the future I'll need this application to not be very resource intensive but still look good)
+ - The dish was extracted from an old game called mechwarrior. I took this into blender and made all the modifications so that it would be an apropriate OBJ.
+ - Modular interface that can be used for other systems (various of the cpp files are going to be used in my capstone project)
+ - All the materials are set to be fairly acurate (the dish is metal the ground is rock)
+ - I thought it was cool that I have 3 separate windows to render stuff in!
+
 ### Current controlls
 The program features 3 windows that can be manipulated.
 
@@ -60,4 +80,6 @@ Decided to make sure manual control still works
  - [ ] HUD to show the line of horizon for the satellite
  - [ ] Tail for the satellite to show where it's been
  - [ ] Create a standard for all variable and function names (I know I'm sorry)
+ - [ ] Tab to next GUI element
+ - [ ] Be able to type in negative numbers
  - [ ] etc.

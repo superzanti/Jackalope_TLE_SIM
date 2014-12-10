@@ -132,11 +132,12 @@ void drawSnowMan() {
 }
 
 void renderBitmapString(
-    float x,
-    float y,
-    float z,
-    void *font,
-    char *string) {
+  float x,
+  float y,
+  float z,
+  void *font,
+  char *string)
+{
 
   char *c;
   glRasterPos3f(x, y,z);
@@ -145,7 +146,8 @@ void renderBitmapString(
   }
 }
 
-void restorePerspectiveProjection() {
+void restorePerspectiveProjection()
+{
   glMatrixMode(GL_PROJECTION);
   // restore previous projection matrix
   glPopMatrix();
@@ -154,7 +156,8 @@ void restorePerspectiveProjection() {
   glMatrixMode(GL_MODELVIEW);
 }
 
-void setOrthographicProjection() {
+void setOrthographicProjection()
+{
   // switch to projection mode
   glMatrixMode(GL_PROJECTION);
 
@@ -172,32 +175,23 @@ void setOrthographicProjection() {
   glMatrixMode(GL_MODELVIEW);
 }
 
-void computePos(float deltaMove) {
+void computePos(float deltaMove)
+{
   x += deltaMove * lx * 0.1f;
   z += deltaMove * lz * 0.1f;
 }
 
 // Common Render Items for all subwindows
-void renderScene2() {
+void renderScene2()
+{
   // Draw ground
-  glColor3f(0.9f, 0.9f, 0.9f);
+  glColor3f(0.3f, 0.6f, 0.3f);
   glBegin(GL_QUADS);
-    glVertex3f(-100.0f, -1.0f, -100.0f);
-    glVertex3f(-100.0f, -1.0f,  100.0f);
-    glVertex3f( 100.0f, -1.0f,  100.0f);
-    glVertex3f( 100.0f, -1.0f, -100.0f);
+    glVertex3f(-500.0f, -1.0f, -500.0f);
+    glVertex3f(-500.0f, -1.0f,  500.0f);
+    glVertex3f( 500.0f, -1.0f,  500.0f);
+    glVertex3f( 500.0f, -1.0f, -500.0f);
   glEnd();
-
-  // Draw 36 SnowMen
-  /*int i,j;
-  for(i = -3; i < 3; i++)
-    for(j=-3; j < 3; j++)
-    {
-      glPushMatrix();
-      glTranslatef(i*10.0f, 0.0f, j * 10.0f);
-      drawSnowMan();
-      glPopMatrix();
-    }*/
 
   struct cLocation myLocation;
   myLocation.dLongitude = -105.25185183;
@@ -221,100 +215,93 @@ void renderScene2() {
     RGBA[2] = 0.6;
   }
 
-   double t = glutGet(GLUT_ELAPSED_TIME)/1000.0;
-   int zh = fmod(90*t,360.0);
-   float Emission[]  = {sunMulti, sunMulti, sunMulti,1.0};
-   float Ambient[]  = {0.5, 0.5, 0.5,1.0};
-   float Diffuse[]   = {0.8,0.8,0.8,1.0};
-   float Specular[]  = {0.8,0.8,0.8,1.0};
-   float Position[]  = {sunRad*Sin(currentSunCoord.dZenithAngle)*Cos(currentSunCoord.dAzimuth), sunRad*Sin(currentSunCoord.dZenithAngle)*Sin(currentSunCoord.dAzimuth), sunRad*Cos(currentSunCoord.dZenithAngle), 1, 0};
-   float Shinyness[] = {16};
+  double t = glutGet(GLUT_ELAPSED_TIME)/1000.0;
+  int zh = fmod(90*t,360.0);
+  float Emission[]  = {sunMulti, sunMulti, sunMulti,1.0};
+  float Ambient[]  = {0.5, 0.5, 0.5,1.0};
+  float Diffuse[]   = {0.8,0.8,0.8,1.0};
+  float Specular[]  = {0.8,0.8,0.8,1.0};
+  float Position[]  = {sunRad*Sin(currentSunCoord.dZenithAngle)*Cos(currentSunCoord.dAzimuth), sunRad*Sin(currentSunCoord.dZenithAngle)*Sin(currentSunCoord.dAzimuth), sunRad*Cos(currentSunCoord.dZenithAngle), 1, 0};
+  float Shinyness[] = {16};
 
-   //  Draw light position as sphere (still no lighting here)
-   glColor3f(1,0.7,0.6);
-   glPushMatrix();
-   glTranslated(Position[1],Position[0],Position[2]);
-   //glRotatef(90,0,0,1);
-   glutSolidSphere(3,10,10);
+  glEnable(GL_FOG);
+  float fogIntense = (fabs(180-fabs((float)currentSunCoord.dZenithAngle))/180);
+  float FogCol[3]={fogIntense, fogIntense, fogIntense}; // Define a nice light grey
+  glFogfv(GL_FOG_COLOR,FogCol);     // Set the fog color
+  // linear fog
+  //changed vim format options form: croql
+  glFogi(GL_FOG_MODE, GL_LINEAR); // Note the 'i' after glFog - the GL_LINEAR constant is an integer.
+  glFogf(GL_FOG_START, 50.0f);
+  glFogf(GL_FOG_END, 100.0f);
+  // exponential fog
+  //glFogi(GL_FOG_MODE, GL_EXP2);
+  //glFogf(GL_FOG_DENSITY, 0.005f);
 
-   //  OpenGL should normalize normal vectors
-   glEnable(GL_NORMALIZE);
-   //  Enable lighting
-   glEnable(GL_LIGHTING);
-   //  Enable light 0
-   glEnable(GL_LIGHT0);
-   //  Set ambient, diffuse, specular components and position of light 0
-   glLightfv(GL_LIGHT0,GL_AMBIENT ,Ambient);
-   glLightfv(GL_LIGHT0,GL_DIFFUSE ,Diffuse);
-   glLightfv(GL_LIGHT0,GL_SPECULAR,Specular);
-   glLightfv(GL_LIGHT0,GL_POSITION,Position);
-   //  Set materials
-   glMaterialfv(GL_FRONT_AND_BACK,GL_SHININESS,Shinyness);
-   glMaterialfv(GL_FRONT_AND_BACK,GL_AMBIENT,RGBA);
-   glMaterialfv(GL_FRONT_AND_BACK,GL_DIFFUSE,RGBA);
-   glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,Specular);
-   glMaterialfv(GL_FRONT_AND_BACK,GL_EMISSION,Emission);
-   glPopMatrix();
+  //  Draw light position as sphere (still no lighting here)
+  glColor3f(1,0.7,0.6);
+  glPushMatrix();
+  glTranslated(Position[1],Position[0],Position[2]);
+  //glRotatef(90,0,0,1);
+  glutSolidSphere(3,10,10);
 
-   glPushMatrix();
-   glScalef(100,100,100);
-   glRotatef(180,0,1,0);
-   glCallList(plane);
-   glPopMatrix();
+  //  OpenGL should normalize normal vectors
+  glEnable(GL_NORMALIZE);
+  //  Enable lighting
+  glEnable(GL_LIGHTING);
+  //  Enable light 0
+  glEnable(GL_LIGHT0);
+  //  Set ambient, diffuse, specular components and position of light 0
+  glLightfv(GL_LIGHT0,GL_AMBIENT ,Ambient);
+  glLightfv(GL_LIGHT0,GL_DIFFUSE ,Diffuse);
+  glLightfv(GL_LIGHT0,GL_SPECULAR,Specular);
+  glLightfv(GL_LIGHT0,GL_POSITION,Position);
+  //  Set materials
+  glMaterialfv(GL_FRONT_AND_BACK,GL_SHININESS,Shinyness);
+  glMaterialfv(GL_FRONT_AND_BACK,GL_AMBIENT,RGBA);
+  glMaterialfv(GL_FRONT_AND_BACK,GL_DIFFUSE,RGBA);
+  glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,Specular);
+  glMaterialfv(GL_FRONT_AND_BACK,GL_EMISSION,Emission);
+  glPopMatrix();
 
-   glPushMatrix();
-   glTranslatef(0, 1.18593f, 0);
-   glCallList(base);
-   glTranslatef(0, -1.18593f, 0);
-   glPopMatrix();
+  glPushMatrix();
+  glScalef(100,100,100);
+  glRotatef(180,0,1,0);
+  glCallList(plane);
+  glPopMatrix();
 
-   glPushMatrix();
-   glRotatef(azimuth,0,1,0);
-   glTranslatef(0, 3.27869f, 0);
-   glCallList(arm);
-   glTranslatef(0, -3.27869f, 0);
-   glRotatef(-azimuth,0,1,0);
-   glPopMatrix();
+  glPushMatrix();
+  glTranslatef(0, 1.18593f, 0);
+  glCallList(base);
+  glTranslatef(0, -1.18593f, 0);
+  glPopMatrix();
 
-   glPushMatrix();
-   glRotatef(azimuth,0,1,0);
-   glTranslatef(0, 3.89526f, 0);
-   glRotatef(90-elevation,0,0,1);
-   glCallList(dish);
-   glRotatef(-90+elevation,0,0,1);
-   glTranslatef(0, -3.89526f, 0);
-   glRotatef(-azimuth,0,1,0);
-   glPopMatrix();
+  glPushMatrix();
+  glRotatef(azimuth,0,1,0);
+  glTranslatef(0, 3.27869f, 0);
+  glCallList(arm);
+  glTranslatef(0, -3.27869f, 0);
+  glRotatef(-azimuth,0,1,0);
+  glPopMatrix();
+
+  glPushMatrix();
+  glRotatef(azimuth,0,1,0);
+  glTranslatef(0, 3.89526f, 0);
+  glRotatef(90-elevation,0,0,1);
+  glCallList(dish);
+  glRotatef(-90+elevation,0,0,1);
+  glTranslatef(0, -3.89526f, 0);
+  glRotatef(-azimuth,0,1,0);
+  glPopMatrix();
 }
 
 // Display func for main window
-void renderScene() {
+void renderScene()
+{
   glutSetWindow(mainWindow);
   glClear(GL_COLOR_BUFFER_BIT);
   glutSwapBuffers();
   glutPostRedisplay();
 }
-
-// Display func for sub window 1
-/*void renderScenesw1() {
-  glutSetWindow(subWindow1);
-
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-  // Turn on alpha blending for textures
-  glEnable(GL_ALPHA_TEST);
-  glAlphaFunc(GL_GREATER, 0.01f);
-
-  glEnable(GL_BLEND);
-  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-  GluiHandle->Render();
-
-  restorePerspectiveProjection();
-
-  glutSwapBuffers();
-  glutPostRedisplay();
-}*/
 
 void calcTimePassed(long* elapsedTime, float* elapsedMils)
 {
@@ -556,11 +543,6 @@ void renderScenesw3()
 
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-  glEnable(GL_FOG);
-  float FogCol[3]={0.8f,0.8f,0.8f}; // Define a nice light grey
-  glFogfv(GL_FOG_COLOR,FogCol);     // Set the fog color
-  glFogi(GL_FOG_MODE, GL_EXP2);
-  glFogf(GL_FOG_DENSITY, 0.01f);
 
   glLoadIdentity();
   gluLookAt(x-lz*30 , 10, z+lx*30,
