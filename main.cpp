@@ -504,9 +504,9 @@ void renderScenesw2()
   float Ambient[]   = {0.5,0.5,0.5,1.0};
   float Diffuse[]   = {0.8,0.8,0.8,1.0};
   float Specular[]  = {0.8,0.8,0.8,1.0};
-  float Position[]  = {sunRad*Sin(currentSunCoord.dZenithAngle)*Cos(currentSunCoord.dAzimuth),
-    sunRad*Sin(currentSunCoord.dZenithAngle)*Sin(currentSunCoord.dAzimuth),
-    sunRad*Cos(currentSunCoord.dZenithAngle), 0.0, 1.0};
+  float Position[]  = {0.5*sunRad*Sin(currentSunCoord.dZenithAngle)*Cos(currentSunCoord.dAzimuth),
+    0.5*sunRad*Sin(currentSunCoord.dZenithAngle)*Sin(currentSunCoord.dAzimuth),
+    0.5*sunRad*Cos(currentSunCoord.dZenithAngle), 0.0, 1.0};
   float Shinyness[] = {16};
 
   //  Draw light position as sphere (still no lighting here)

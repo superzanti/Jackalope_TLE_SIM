@@ -10,6 +10,12 @@ The program also features an acurate sun in both windows. The sun has the same a
 
     make && ./jackalope
 
+If you just want to see the program (and let me show off) then follow these steps:
+ - Click 'set time to current' after starting the program
+ - Click 'start simulation'
+ - Click in the multiplier box then set the multiplier to 100
+ - Profit
+
 I only used external libraries that were packaged with my operating system (Arch Linux). So it should work for any linux distro given that you have g++ installed.
 
 ### Notes

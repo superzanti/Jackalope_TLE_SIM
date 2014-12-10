@@ -16,7 +16,7 @@ CFLG=-O3 -Wall -Wno-deprecated-declarations
 LIBS=-framework GLUT -framework OpenGL
 #  Linux/Unix/Solaris
 else
-CFLG=-O3 -Wall
+CFLG=-O3 #-Wall
 LIBS=-lX11 -lXi -lXmu -lglut -lGLU -lGL -lm
 endif
 #  OSX/Linux/Unix/Solaris
@@ -70,7 +70,7 @@ glui2.a:g2Button.o g2CheckBox.o g2Config.o g2Console.o g2Controller.o g2Dialog.o
 
 #  Link
 jackalope: main.o initglui.o fatal.o loadtexbmp.o object.o plan13.o sunpos.o glui2.a
-	g++ $(LIBS) -o $@ $^
+	g++ -o $@ $^ $(LIBS)
 
 #  Clean
 clean:
