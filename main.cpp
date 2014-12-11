@@ -277,18 +277,22 @@ void renderScene2()
 
   glPushMatrix();
   glRotatef(azimuth,0,1,0);
+  glRotatef(-90,0,1,0);
   glTranslatef(0, 3.27869f, 0);
   glCallList(arm);
   glTranslatef(0, -3.27869f, 0);
+  glRotatef(90,0,1,0);
   glRotatef(-azimuth,0,1,0);
   glPopMatrix();
 
   glPushMatrix();
   glRotatef(azimuth,0,1,0);
   glTranslatef(0, 3.89526f, 0);
+  glRotatef(-90,0,1,0);
   glRotatef(90-elevation,0,0,1);
   glCallList(dish);
   glRotatef(-90+elevation,0,0,1);
+  glRotatef(90,0,1,0);
   glTranslatef(0, -3.89526f, 0);
   glRotatef(-azimuth,0,1,0);
   glPopMatrix();
@@ -436,8 +440,8 @@ void gluiRender()
       elevation = spinEl->GetFloat();
     }
 
-    if (elevation < 0)
-      elevation = 0;
+    if (elevation < 5)
+      elevation = 5;
 
     // Flush / force a render, and swap back/front buffers
     glFlush();
